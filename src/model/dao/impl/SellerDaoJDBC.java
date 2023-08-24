@@ -27,9 +27,9 @@ public class SellerDaoJDBC implements SellerDao {
         PreparedStatement st = null;
         try {
             st = conn.prepareStatement("INSERT INTO seller\n" +
-                    "(Name, Email, BirthDate, BaseSalary, DepartmentId)\n" +
-                    "VALUES\n" +
-                    "(?, ?, ?, ?, ?)",
+                            "(Name, Email, BirthDate, BaseSalary, DepartmentId)\n" +
+                            "VALUES\n" +
+                            "(?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, obj.getName());
             st.setString(2, obj.getEmail());
@@ -81,7 +81,19 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void deleteById(Integer id) {
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement("DELETE FROM seller\n" +
+                    "WHERE Id = ?");
+            st.setInt(1, id);
 
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
@@ -140,7 +152,8 @@ public class SellerDaoJDBC implements SellerDao {
         } finally {
             DB.closeStatement(st);
             DB.closeResultSet(rs);
-        }    }
+        }
+    }
 
     @Override
     public List<Seller> findByDepartment(Department department) {
